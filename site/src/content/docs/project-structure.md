@@ -23,8 +23,8 @@ The repo root is the workspace root. From here you run `cargo` for the Rust crat
 | File | Purpose |
 |------|---------|
 | `Cargo.toml` | Workspace definition: members (core, data, search, graph, vector, plugins, cli), shared deps, release profile. |
-| `crates/cncf-mcp-core/Cargo.toml` | Main server crate; binary name `cncf-mcp`. |
-| `crates/cncf-mcp-cli/Cargo.toml` | CLI crate; binary name `cncf-mcp-cli` (sync, validate). |
+| `crates/mcp-atlas-core/Cargo.toml` | Main server crate; binary name `mcp-atlas`. |
+| `crates/mcp-atlas-cli/Cargo.toml` | CLI crate; binary name `mcp-atlas-cli` (sync, validate). |
 | `site/package.json` | Site scripts: `dev`, `build`, `preview`, `lint`. Entry for Vite dev server and production build. |
 | `site/vite.config.ts` | Vite config; base URL and doc routing. |
 | `data/landscape.yml` | Optional local copy of CNCF landscape; use with `--landscape-file data/landscape.yml`. |
@@ -34,8 +34,8 @@ The repo root is the workspace root. From here you run `cargo` for the Rust crat
 
 After `cargo build --release`:
 
-- **`target/release/cncf-mcp`**  MCP server (STDIO or HTTP).
-- **`target/release/cncf-mcp-cli`**  CLI for `sync` and `validate`.
+- **`target/release/mcp-atlas`**  MCP server (STDIO or HTTP).
+- **`target/release/mcp-atlas-cli`**  CLI for `sync` and `validate`.
 
 After `npm run build` in `site/`:
 
@@ -48,9 +48,9 @@ After `npm run build` in `site/`:
 
 ## Command line entrypoints
 
-- **Run server (STDIO):** `cargo run -p cncf-mcp-core -- --transport stdio --skip-github`
-- **Run server (HTTP):** `cargo run -p cncf-mcp-core -- --transport sse --port 3000`
+- **Run server (STDIO):** `cargo run -p mcp-atlas-core -- --transport stdio --skip-github`
+- **Run server (HTTP):** `cargo run -p mcp-atlas-core -- --transport sse --port 3000`
 - **Run site dev server:** `cd site && npm run dev`
 - **Build site:** `cd site && npm run build`
-- **Sync landscape:** `cargo run -p cncf-mcp-cli -- sync`
-- **Validate landscape:** `cargo run -p cncf-mcp-cli -- validate data/landscape.yml`
+- **Sync landscape:** `cargo run -p mcp-atlas-cli -- sync`
+- **Validate landscape:** `cargo run -p mcp-atlas-cli -- validate data/landscape.yml`

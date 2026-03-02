@@ -22,7 +22,7 @@ export function Solution() {
         >
           <Heading as="h2">One server, full landscape</Heading>
           <Text className="mt-4 text-base leading-[1.6]" muted>
-            CNCF MCP exposes the entire landscape over the Model Context
+            MCPAtlas exposes the entire landscape over the Model Context
             Protocol: search, get project details, compare, find alternatives,
             health scores, stack suggestions, trends, and a knowledge graph. Use
             it from Claude, Cursor, VS Code, or any MCP client — STDIO, SSE, or

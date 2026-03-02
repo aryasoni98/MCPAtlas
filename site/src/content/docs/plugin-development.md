@@ -15,7 +15,7 @@ Plugins run in a sandboxed runtime and can register tools and resources. The hos
 ## SDK and ABI
 
 - Use the plugin SDK (when published) for the recommended interface and host functions.
-- Document any custom host functions and version guarantees in the repo (e.g. in `crates/cncf-mcp-plugins/`).
+- Document any custom host functions and version guarantees in the repo (e.g. in `crates/mcp-atlas-plugins/`).
 
 ## Security
 

@@ -2,7 +2,7 @@ const basePath = import.meta.env.VITE_BASE_PATH ?? "";
 export const DOCS_URL = `${basePath}docs`;
 /** Full user guide (mdBook), deployed at /book when built via Pages workflow. */
 export const BOOK_URL = `${basePath}book`;
-export const GITHUB_URL = "https://github.com/cncf-mcp/server";
+export const GITHUB_URL = "https://github.com/mcp-atlas/mcp-atlas";
 export const CONTRIBUTE_URL = `${GITHUB_URL}/blob/main/CONTRIBUTING.md`;
 
 export interface NavLink {

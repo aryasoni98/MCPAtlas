@@ -5,7 +5,7 @@ We welcome contributions. This page summarizes how to build, test, and submit ch
 ## Build and test
 
 ```bash
-git clone https://github.com/cncf-mcp/server.git
+git clone https://github.com/mcp-atlas/mcp-atlas.git
 cd server
 cargo build
 cargo test --workspace
@@ -22,7 +22,7 @@ cargo test --workspace
 
 - Open a PR with a clear description and type (feat, fix, docs, etc.).
 - Ensure CI passes (format, clippy, tests).
-- See [CONTRIBUTING.md](https://github.com/cncf-mcp/server/blob/main/CONTRIBUTING.md) in the repo for full details, conventional commits, and code of conduct.
+- See [CONTRIBUTING.md](https://github.com/mcp-atlas/mcp-atlas/blob/main/CONTRIBUTING.md) in the repo for full details, conventional commits, and code of conduct.
 
 ## Code of conduct
 

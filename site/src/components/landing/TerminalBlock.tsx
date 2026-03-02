@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 /** Terminal lines per spec: real commands and tool names; accent on key tokens. */
 const LINES: { text: string; accent?: string }[] = [
-  { text: "$ cncf-mcp --transport stdio" },
+  { text: "$ mcp-atlas --transport stdio" },
   { text: "> tools/list" },
   {
     text: "  search_projects, get_project, compare_projects, ...",

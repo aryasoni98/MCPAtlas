@@ -15,7 +15,7 @@ See `.github/workflows/` for the full pipeline (e.g. `ci.yml`, `release.yml`, `p
 
 - Tag a version (e.g. `v1.0.0`); the release workflow builds multi-arch binaries and the container image.
 - Attach artifacts to the GitHub Release; optionally publish to registries and package managers (e.g. Homebrew).
-- See [CONTRIBUTING.md](https://github.com/cncf-mcp/server/blob/main/CONTRIBUTING.md) and the release checklist for signing, SBOM, and provenance.
+- See [CONTRIBUTING.md](https://github.com/mcp-atlas/mcp-atlas/blob/main/CONTRIBUTING.md) and the release checklist for signing, SBOM, and provenance.
 
 ## Contributing
 

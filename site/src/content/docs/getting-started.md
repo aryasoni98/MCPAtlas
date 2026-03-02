@@ -10,26 +10,26 @@
 ### From source
 
 ```bash
-git clone https://github.com/cncf-mcp/server.git
+git clone https://github.com/mcp-atlas/server.git
 cd server
 cargo build --release
 ```
 
 Binaries:
 
-- `target/release/cncf-mcp`  MCP server
-- `target/release/cncf-mcp-cli`  CLI for sync and validation
+- `target/release/mcp-atlas`  MCP server
+- `target/release/mcp-atlas-cli`  CLI for sync and validation
 
 ### Docker
 
 ```bash
-docker run -p 3000:3000 ghcr.io/cncf-mcp/server:latest
+docker run -p 3000:3000 ghcr.io/mcp-atlas/server:latest
 ```
 
 ### Homebrew (when available)
 
 ```bash
-brew install cncf-mcp/tap/cncf-mcp
+brew install mcp-atlas/tap/mcp-atlas
 ```
 
 ## Run the server
@@ -37,7 +37,7 @@ brew install cncf-mcp/tap/cncf-mcp
 ### STDIO (local clients, e.g. Claude Desktop)
 
 ```bash
-./target/release/cncf-mcp --transport stdio --skip-github
+./target/release/mcp-atlas --transport stdio --skip-github
 ```
 
 Use `--skip-github` for a fast start without GitHub API calls. Add `GITHUB_TOKEN` and omit `--skip-github` for full enrichment.
@@ -45,7 +45,7 @@ Use `--skip-github` for a fast start without GitHub API calls. Add `GITHUB_TOKEN
 ### HTTP (remote clients, e.g. Cursor, VS Code)
 
 ```bash
-./target/release/cncf-mcp --transport sse --port 3000
+./target/release/mcp-atlas --transport sse --port 3000
 ```
 
 Then point your MCP client at `http://localhost:3000/sse` (or the URL of your deployment).
@@ -60,11 +60,11 @@ Add to your MCP config (e.g. `claude_desktop_config.json`):
 {
   "mcpServers": {
     "cncf-landscape": {
-      "command": "/path/to/cncf-mcp",
+      "command": "/path/to/mcp-atlas",
       "args": ["--transport", "stdio", "--skip-github"],
       "env": {
         "GITHUB_TOKEN": "<optional>",
-        "CNCF_MCP_CACHE_DIR": "~/.cache/cncf-mcp"
+        "MCP_ATLAS_CACHE_DIR": "~/.cache/mcp-atlas"
       }
     }
   }

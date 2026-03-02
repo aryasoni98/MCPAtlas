@@ -3,13 +3,13 @@
 ## Docker
 
 ```bash
-docker run -p 3000:3000 ghcr.io/cncf-mcp/server:latest
+docker run -p 3000:3000 ghcr.io/mcp-atlas/server:latest
 ```
 
 Use a volume for cache persistence:
 
 ```bash
-docker run -p 3000:3000 -v cncf-mcp-cache:/app/cache ghcr.io/cncf-mcp/server:latest
+docker run -p 3000:3000 -v mcp-atlas-cache:/app/cache ghcr.io/mcp-atlas/server:latest
 ```
 
 ## Docker Compose
@@ -19,7 +19,7 @@ See `deploy/docker/` in the repo for a Compose file with health checks and cache
 ## Kubernetes / Helm
 
 ```bash
-helm install cncf-mcp deploy/helm/cncf-mcp
+helm install mcp-atlas deploy/helm/mcp-atlas
 ```
 
 Chart includes Deployment, Service, optional Ingress, HPA, and PDB. See `deploy/helm/README.md` for values and security context.

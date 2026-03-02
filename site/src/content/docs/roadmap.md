@@ -1,6 +1,6 @@
 # Roadmap
 
-Aligned with [ROADMAP.md](https://github.com/cncf-mcp/server/blob/main/ROADMAP.md) in the repo.
+Aligned with [ROADMAP.md](https://github.com/mcp-atlas/mcp-atlas/blob/main/ROADMAP.md) in the repo.
 
 ## Phase 1: Foundation (complete)
 
@@ -30,4 +30,4 @@ Aligned with [ROADMAP.md](https://github.com/cncf-mcp/server/blob/main/ROADMAP.m
 - SLSA Level 3, cosign
 - Persistent Tantivy index
 
-See the [full roadmap](https://github.com/cncf-mcp/server/blob/main/ROADMAP.md) for success metrics and details.
+See the [full roadmap](https://github.com/mcp-atlas/mcp-atlas/blob/main/ROADMAP.md) for success metrics and details.
