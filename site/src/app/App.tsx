@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { MainLayout } from "@/layouts/MainLayout";
 import { LandingPage } from "@/pages/LandingPage";
 import { DocsLayout } from "@/pages/DocsLayout";
@@ -15,6 +16,7 @@ export default function App() {
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <SpeedInsights />
     </MainLayout>
   );
 }
