@@ -42,6 +42,8 @@ pub enum McpError {
 pub mod codes {
     /// Parse error — invalid JSON was received.
     pub const PARSE_ERROR: i32 = -32700;
+    /// Invalid params — invalid method parameters.
+    pub const INVALID_PARAMS: i32 = -32602;
     /// Method not found.
     pub const METHOD_NOT_FOUND: i32 = -32601;
     /// Server error — tool execution failed.

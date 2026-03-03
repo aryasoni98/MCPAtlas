@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Input validation**: Query length (1KB max) for `search_projects`, `suggest_stack`, `analyze_trends`; project name length (256 bytes) for `get_project`, `find_alternatives`, `get_health_score`, `get_relationships`, `find_path`, `get_migration_path`, `compare_projects`; `compare_projects` array cap (20); limit/offset bounds (max 100/10k) for paginated tools; request body limit (1MB) for STDIO and HTTP transports
+- **ADOPTERS.md**: Template for organizations using MCPAtlas
+- **Issue templates**: Bug report and feature request (`.github/ISSUE_TEMPLATE/`)
+- **Launch Readiness Report**: `docs/LAUNCH_READINESS_REPORT.md` with readiness summary
 - **Argument extraction helpers** (`tools/args.rs`): `parse_string_arg`, `parse_optional_str`, `parse_usize_arg`, `parse_optional_u64` to reduce boilerplate in tool handlers
 - **Hybrid search module** (`tools/hybrid.rs`): Reciprocal Rank Fusion (RRF) extracted for reuse; `reciprocal_rank_fusion` and `RRF_K` constant
 - **Per-method dispatch** (`tools/dispatch.rs`): Dedicated handlers for each MCP JSON-RPC method (`handle_initialize`, `handle_tools_call`, etc.)
@@ -43,7 +47,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **CONTRIBUTING**: Corrected development setup path (`cd server` → `cd mcp-atlas`)
+
 ### Security
+
+- **Input validation**: `validate_string_len` in `args`; `INVALID_PARAMS` error code for oversized inputs
+- **Request body limits**: 1MB max for STDIO (reject + discard oversized); `DefaultBodyLimit` for HTTP
 
 ---
 

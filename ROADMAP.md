@@ -2,6 +2,8 @@
 
 Public roadmap for MCPAtlas. Aligned with [MCP_BLUEPRINT.md](MCP_BLUEPRINT.md) and [DEEP_PLAN.md](DEEP_PLAN.md).
 
+**High-level vision & end goal:** See [docs/ROADMAP_VISION.md](docs/ROADMAP_VISION.md).
+
 ## Phase 1: Foundation (complete)
 
 **Goal:** Installable, usable MCP server with core data and search.
@@ -43,13 +45,24 @@ Public roadmap for MCPAtlas. Aligned with [MCP_BLUEPRINT.md](MCP_BLUEPRINT.md) a
 
 **Goal:** Production-grade, horizontal scaling, security hardening.
 
-- Redis for shared state (sessions, cache), multi-pod scaling
+- [ ] Redis for shared state (sessions, cache), multi-pod scaling
 - [x] Helm chart (deployment, service, ingress, HPA, PDB; Redis option TBD)
 - [x] Helm hardening: values.schema.json, Pod/container securityContext (runAsNonRoot, drop all caps, seccomp)
 - [x] Audit logging: structured tool_call events (tool, params_hash, status, latency_ms) to stderr; AuditLogger trait + StderrAuditLogger
 - RBAC, optional auth
 - SLSA Level 3 provenance, cosign signing
 - Performance tuning (persistent Tantivy index, search cache)
+
+## Phase 5: AI-augmented contribution (future)
+
+**Goal:** Token-efficient issue resolution for CNCF-related repos.
+
+- [ ] `get_issue_context` tool: repo URL + issue URL → compact resolution brief
+- [ ] GitHub API integration for issues (octocrab)
+- [ ] CNCF project metadata attached when repo is in landscape
+- [ ] Workflow: paste issue URL → AI gets brief → resolves in &lt;5 turns, &lt;20K tokens
+
+See [docs/ROADMAP_VISION.md](docs/ROADMAP_VISION.md) for full vision.
 
 ## Success metrics (targets)
 

@@ -1,9 +1,11 @@
 # MCPAtlas
 
-[![CI](https://img.shields.io/github/actions/workflow/status/mcp-atlas/mcp-atlas/ci.yml?branch=main)](https://github.com/mcp-atlas/mcp-atlas/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/aryasoni98/mcpatlas/ci.yml?branch=main)](https://github.com/aryasoni98/mcpatlas/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Rust](https://img.shields.io/badge/rust-1.85%2B-orange.svg)](https://www.rust-lang.org/)
-[![Docker](https://img.shields.io/badge/docker-ghcr.io%2Fmcp--atlas%2Fmcp--atlas-2496ED?logo=docker)](https://github.com/mcp-atlas/mcp-atlas/pkgs/container/mcp-atlas)
+[![MCP](https://img.shields.io/badge/MCP-Server-8B5CF6)](https://modelcontextprotocol.io/)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io%2Faryasoni98%2Fmcpatlas-2496ED?logo=docker)](https://github.com/aryasoni98/mcpatlas/pkgs/container/mcpatlas)
+[![CNCF](https://img.shields.io/badge/CNCF-Landscape-326CE5?logo=kubernetes)](https://landscape.cncf.io/)
 
 <p align="center">
   <img src=".github/images/MCPAtlas.png" alt="MCPAtlas - MCP Server for the CNCF Landscape" width="800">
@@ -12,6 +14,12 @@
 **MCP Server for the CNCF Landscape** — Query 2,400+ cloud-native projects from any AI assistant.
 
 An open-source [Model Context Protocol](https://modelcontextprotocol.io/) server that makes the entire [CNCF Landscape](https://landscape.cncf.io/) available to AI tools like Claude, Cursor, VS Code Copilot, and custom agents.
+
+| Install | Command |
+|---------|---------|
+| **Docker** | `docker run -p 3000:3000 ghcr.io/aryasoni98/mcpatlas:latest` |
+| **Homebrew** | `brew tap aryasoni98/mcpatlas && brew install mcp-atlas` |
+| **From source** | `git clone https://github.com/aryasoni98/mcpatlas.git && cd mcpatlas && cargo build --release` |
 
 ## Architecture at a glance
 
@@ -134,8 +142,8 @@ flowchart TB
 
 ```bash
 # Clone and build
-git clone https://github.com/mcp-atlas/mcp-atlas.git
-cd mcp-atlas
+git clone https://github.com/aryasoni98/mcpatlas.git
+cd mcpatlas
 cargo build --release
 
 # Run with STDIO transport (for Claude Desktop / Claude Code)
@@ -152,8 +160,8 @@ export GITHUB_TOKEN=ghp_...
 ### Docker
 
 ```bash
-# Quick run
-docker run -p 3000:3000 ghcr.io/mcp-atlas/mcp-atlas:latest
+# Quick run (linux/amd64, linux/arm64)
+docker run -p 3000:3000 ghcr.io/aryasoni98/mcpatlas:latest
 
 # With docker-compose (includes health checks and persistent cache)
 cd deploy/docker
@@ -277,7 +285,7 @@ mcp-atlas/
 ## Development
 
 ```bash
-cargo test --workspace        # Run all 102 tests
+cargo test --workspace        # Run all tests
 cargo clippy --workspace      # Lint
 cargo fmt --all               # Format
 cargo bench -p mcp-atlas-search # Run search benchmarks
@@ -301,7 +309,7 @@ If you use MCPAtlas in production or for significant non-production use, we’d 
 
 - **Adopters:** Add your organization to [ADOPTERS.md](ADOPTERS.md) via a pull request (name + one-line use case).
 - **Metrics:** The server exposes Prometheus metrics at `GET /metrics` (request count, latency, tool usage). You can scrape this endpoint for your own dashboards; we do not collect usage data centrally.
-- **Feedback:** Open a [GitHub Discussion](https://github.com/mcp-atlas/mcp-atlas/discussions) for questions, ideas, or success stories.
+- **Feedback:** Open a [GitHub Discussion](https://github.com/aryasoni98/mcpatlas/discussions) for questions, ideas, or success stories.
 
 ## License
 

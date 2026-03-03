@@ -23,8 +23,9 @@ fn project_summary_by_name(projects: &[Project], name: &str) -> Option<ProjectSu
 /// embedding provider and vector backend are configured.
 pub async fn handle_search_projects(state: &Arc<AppState>, args: &Value) -> Result<Value> {
     let query = args::parse_string_arg(args, "query", "");
-    let limit = args::parse_usize_arg(args, "limit", 10);
-    let offset = args::parse_usize_arg(args, "offset", 0);
+    args::validate_string_len(&query, args::MAX_QUERY_LEN).map_err(|e| anyhow::anyhow!("{e}"))?;
+    let limit = args::parse_usize_arg(args, "limit", 10).min(args::MAX_LIMIT);
+    let offset = args::parse_usize_arg(args, "offset", 0).min(args::MAX_OFFSET);
     let category_filter = args::parse_optional_str(args, "category");
     let maturity_filter = args::parse_optional_str(args, "maturity");
     let min_stars = args::parse_optional_u64(args, "min_stars");
@@ -151,6 +152,9 @@ pub fn handle_get_project(state: &Arc<AppState>, args: &Value) -> Result<Value> 
         .and_then(|n| n.as_str())
         .ok_or_else(|| anyhow::anyhow!("Missing required parameter: name"))?;
 
+    args::validate_string_len(name, args::MAX_PROJECT_NAME_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
+
     let name_lower = name.to_lowercase();
     let project = state
         .projects
@@ -199,6 +203,16 @@ pub fn handle_compare_projects(state: &Arc<AppState>, args: &Value) -> Result<Va
 
     if project_names.len() < 2 {
         anyhow::bail!("At least 2 project names are required for comparison");
+    }
+    if project_names.len() > args::MAX_COMPARE_PROJECTS {
+        anyhow::bail!(
+            "Too many projects; maximum {} allowed",
+            args::MAX_COMPARE_PROJECTS
+        );
+    }
+    for name in &project_names {
+        args::validate_string_len(name, args::MAX_PROJECT_NAME_LEN)
+            .map_err(|e| anyhow::anyhow!("{e}"))?;
     }
 
     let mut found = Vec::new();
@@ -407,6 +421,9 @@ pub fn handle_find_alternatives(state: &Arc<AppState>, args: &Value) -> Result<V
         .and_then(|n| n.as_str())
         .ok_or_else(|| anyhow::anyhow!("Missing required parameter: project"))?;
 
+    args::validate_string_len(name, args::MAX_PROJECT_NAME_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
+
     let name_lower = name.to_lowercase();
     let base_project = state
         .projects
@@ -436,7 +453,7 @@ pub fn handle_find_alternatives(state: &Arc<AppState>, args: &Value) -> Result<V
         stars_b.cmp(&stars_a)
     });
 
-    let limit = args::parse_usize_arg(args, "limit", 10);
+    let limit = args::parse_usize_arg(args, "limit", 10).min(args::MAX_LIMIT);
     alternatives.truncate(limit);
 
     let mut output = format!(
@@ -466,6 +483,9 @@ pub fn handle_get_health_score(state: &Arc<AppState>, args: &Value) -> Result<Va
         .get("project")
         .and_then(|n| n.as_str())
         .ok_or_else(|| anyhow::anyhow!("Missing required parameter: project"))?;
+
+    args::validate_string_len(name, args::MAX_PROJECT_NAME_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
 
     let name_lower = name.to_lowercase();
     let project = state
@@ -544,7 +564,16 @@ pub fn handle_get_good_first_issues(state: &Arc<AppState>, args: &Value) -> Resu
         .get("category")
         .and_then(|c| c.as_str())
         .map(|s| s.to_lowercase());
-    let limit = args::parse_usize_arg(args, "limit", 20);
+
+    if let Some(ref lang) = language_filter {
+        args::validate_string_len(lang, args::MAX_PROJECT_NAME_LEN)
+            .map_err(|e| anyhow::anyhow!("{e}"))?;
+    }
+    if let Some(ref cat) = category_filter {
+        args::validate_string_len(cat, args::MAX_QUERY_LEN).map_err(|e| anyhow::anyhow!("{e}"))?;
+    }
+
+    let limit = args::parse_usize_arg(args, "limit", 20).min(args::MAX_LIMIT);
 
     let mut candidates: Vec<_> = state
         .projects

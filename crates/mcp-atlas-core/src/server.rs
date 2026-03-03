@@ -258,6 +258,30 @@ async fn run_stdio(state: Arc<AppState>) -> Result<()> {
             }
         };
 
+        // Reject oversized requests (1MB max) to prevent OOM
+        const MAX_BODY_LEN: usize = 1024 * 1024;
+        if content_length > MAX_BODY_LEN {
+            let response = tools::make_error_response(
+                serde_json::Value::Null,
+                crate::error::codes::INVALID_PARAMS,
+                "Request body exceeds maximum size of 1MB",
+            );
+            let response_bytes = serde_json::to_vec(&response)?;
+            let header = format!("Content-Length: {}\r\n\r\n", response_bytes.len());
+            stdout.write_all(header.as_bytes()).await?;
+            stdout.write_all(&response_bytes).await?;
+            stdout.flush().await?;
+            // Consume and discard the oversized body in chunks to stay in sync
+            let mut remaining = content_length;
+            let mut buf = [0u8; 65536];
+            while remaining > 0 {
+                let to_read = std::cmp::min(remaining, buf.len());
+                tokio::io::AsyncReadExt::read_exact(&mut reader, &mut buf[..to_read]).await?;
+                remaining -= to_read;
+            }
+            continue;
+        }
+
         // Read exactly content_length bytes
         let mut body = vec![0u8; content_length];
         tokio::io::AsyncReadExt::read_exact(&mut reader, &mut body).await?;
@@ -329,7 +353,7 @@ async fn read_content_length(reader: &mut BufReader<tokio::io::Stdin>) -> Result
 pub fn build_router(state: Arc<AppState>) -> axum::Router {
     use axum::{
         Json, Router,
-        extract::State,
+        extract::{DefaultBodyLimit, State},
         http::{HeaderMap, StatusCode},
         response::{
             IntoResponse, Response,
@@ -658,6 +682,7 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
                 .get(handle_streamable_get)
                 .delete(handle_streamable_delete),
         )
+        .layer(DefaultBodyLimit::max(1024 * 1024)) // 1MB max request body
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state)

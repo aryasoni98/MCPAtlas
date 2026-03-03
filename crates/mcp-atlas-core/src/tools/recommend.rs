@@ -18,6 +18,9 @@ pub fn handle_suggest_stack(state: &Arc<AppState>, args: &Value) -> Result<Value
         .and_then(|u| u.as_str())
         .ok_or_else(|| anyhow::anyhow!("Missing required parameter: use_case"))?;
 
+    crate::tools::args::validate_string_len(use_case, crate::tools::args::MAX_QUERY_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
+
     let constraints: Vec<String> = args
         .get("constraints")
         .and_then(|c| serde_json::from_value(c.clone()).ok())
@@ -203,6 +206,9 @@ pub fn handle_analyze_trends(state: &Arc<AppState>, args: &Value) -> Result<Valu
         .and_then(|c| c.as_str())
         .ok_or_else(|| anyhow::anyhow!("Missing required parameter: category"))?;
 
+    crate::tools::args::validate_string_len(category, crate::tools::args::MAX_QUERY_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
+
     let cat_lower = category.to_lowercase();
 
     // Find all projects in this category
@@ -363,6 +369,11 @@ pub async fn handle_get_migration_path(state: &Arc<AppState>, args: &Value) -> R
         .or_else(|| args.get("to"))
         .and_then(|v| v.as_str())
         .ok_or_else(|| anyhow::anyhow!("Missing required parameter: to_project (or to)"))?;
+
+    crate::tools::args::validate_string_len(from_name, crate::tools::args::MAX_PROJECT_NAME_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
+    crate::tools::args::validate_string_len(to_name, crate::tools::args::MAX_PROJECT_NAME_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
 
     let from_lower = from_name.to_lowercase();
     let to_lower = to_name.to_lowercase();

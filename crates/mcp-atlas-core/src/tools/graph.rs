@@ -14,6 +14,9 @@ pub async fn handle_get_relationships(state: &Arc<AppState>, arguments: &Value) 
         .and_then(|v| v.as_str())
         .ok_or_else(|| anyhow::anyhow!("Missing required parameter: project"))?;
 
+    crate::tools::args::validate_string_len(project, crate::tools::args::MAX_PROJECT_NAME_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
+
     let relation_filter = arguments.get("relation").and_then(|v| v.as_str());
 
     let edges = state.graph.get_edges(project).await?;
@@ -75,6 +78,11 @@ pub async fn handle_find_path(state: &Arc<AppState>, arguments: &Value) -> Resul
         .get("to")
         .and_then(|v| v.as_str())
         .ok_or_else(|| anyhow::anyhow!("Missing required parameter: to"))?;
+
+    crate::tools::args::validate_string_len(from, crate::tools::args::MAX_PROJECT_NAME_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
+    crate::tools::args::validate_string_len(to, crate::tools::args::MAX_PROJECT_NAME_LEN)
+        .map_err(|e| anyhow::anyhow!("{e}"))?;
 
     let path = state.graph.find_path(from, to, 5).await?;
     match path {

@@ -4,6 +4,6 @@ Maintainers are responsible for technical direction, release management, PR revi
 
 | Name | GitHub | Role |
 |------|--------|------|
-| *TBD* | | Initial maintainer list |
+| Arya Soni | [aryasoni98](https://github.com/aryasoni98) | Project lead |
 
 To propose adding a maintainer, open an issue or PR with community support and maintainer consensus.

@@ -269,6 +269,30 @@ async fn test_search_projects() {
 }
 
 #[tokio::test]
+async fn test_search_projects_rejects_oversized_query() {
+    let state = sample_state();
+    let long_query = "x".repeat(1025);
+    let request = json!({
+        "jsonrpc": "2.0",
+        "id": 99,
+        "method": "tools/call",
+        "params": {
+            "name": "search_projects",
+            "arguments": { "query": long_query }
+        }
+    });
+
+    let response = mcp_atlas_core::tools::handle_jsonrpc(&state, &request).await;
+    assert!(!response["error"].is_null());
+    assert!(
+        response["error"]["message"]
+            .as_str()
+            .unwrap()
+            .contains("exceeds maximum length")
+    );
+}
+
+#[tokio::test]
 async fn test_get_project_found() {
     let state = sample_state();
     let request = json!({
@@ -325,6 +349,30 @@ async fn test_compare_projects() {
     assert!(text.contains("Graduated")); // Both are graduated
     assert!(text.contains("Go"));
     assert!(text.contains("TypeScript"));
+}
+
+#[tokio::test]
+async fn test_compare_projects_rejects_too_many() {
+    let state = sample_state();
+    let many_projects: Vec<String> = (0..21).map(|i| format!("Project{i}")).collect();
+    let request = json!({
+        "jsonrpc": "2.0",
+        "id": 6,
+        "method": "tools/call",
+        "params": {
+            "name": "compare_projects",
+            "arguments": { "projects": many_projects }
+        }
+    });
+
+    let response = mcp_atlas_core::tools::handle_jsonrpc(&state, &request).await;
+    assert!(!response["error"].is_null());
+    assert!(
+        response["error"]["message"]
+            .as_str()
+            .unwrap()
+            .contains("Too many projects")
+    );
 }
 
 #[tokio::test]
@@ -574,6 +622,30 @@ async fn test_suggest_stack_with_constraints() {
 }
 
 #[tokio::test]
+async fn test_suggest_stack_rejects_oversized_use_case() {
+    let state = sample_state();
+    let long_use_case = "x".repeat(1025);
+    let request = json!({
+        "jsonrpc": "2.0",
+        "id": 103,
+        "method": "tools/call",
+        "params": {
+            "name": "suggest_stack",
+            "arguments": { "use_case": long_use_case }
+        }
+    });
+
+    let response = mcp_atlas_core::tools::handle_jsonrpc(&state, &request).await;
+    assert!(!response["error"].is_null());
+    assert!(
+        response["error"]["message"]
+            .as_str()
+            .unwrap()
+            .contains("exceeds maximum length")
+    );
+}
+
+#[tokio::test]
 async fn test_analyze_trends() {
     let state = sample_state();
     let request = json!({
@@ -611,6 +683,30 @@ async fn test_analyze_trends_no_match() {
     let response = mcp_atlas_core::tools::handle_jsonrpc(&state, &request).await;
     let text = response["result"]["content"][0]["text"].as_str().unwrap();
     assert!(text.contains("No projects found"));
+}
+
+#[tokio::test]
+async fn test_analyze_trends_rejects_oversized_category() {
+    let state = sample_state();
+    let long_category = "x".repeat(1025);
+    let request = json!({
+        "jsonrpc": "2.0",
+        "id": 105,
+        "method": "tools/call",
+        "params": {
+            "name": "analyze_trends",
+            "arguments": { "category": long_category }
+        }
+    });
+
+    let response = mcp_atlas_core::tools::handle_jsonrpc(&state, &request).await;
+    assert!(!response["error"].is_null());
+    assert!(
+        response["error"]["message"]
+            .as_str()
+            .unwrap()
+            .contains("exceeds maximum length")
+    );
 }
 
 #[tokio::test]

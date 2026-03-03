@@ -11,7 +11,7 @@ We welcome contributions. See the repository root [CONTRIBUTING.md](https://gith
 Quick start:
 
 ```bash
-git clone https://github.com/mcp-atlas/mcp-atlas.git
+git clone https://github.com/aryasoni98/mcpatlas.git
 cd server
 cargo build
 cargo test --workspace

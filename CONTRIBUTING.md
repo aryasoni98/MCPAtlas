@@ -11,8 +11,8 @@ Thank you for your interest in contributing. This document explains how to set u
 ## Development Setup
 
 ```bash
-git clone https://github.com/mcp-atlas/mcp-atlas.git
-cd server
+git clone https://github.com/aryasoni98/mcpatlas.git
+cd mcp-atlas
 cargo build
 cargo test --workspace
 ```
