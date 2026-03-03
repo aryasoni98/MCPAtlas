@@ -26,10 +26,11 @@ Binaries:
 docker run -p 3000:3000 ghcr.io/mcp-atlas/server:latest
 ```
 
-### Homebrew (when available)
+### Homebrew
 
 ```bash
-brew install mcp-atlas/tap/mcp-atlas
+brew tap aryasoni98/mcpatlas
+brew install mcp-atlas
 ```
 
 ## Run the server

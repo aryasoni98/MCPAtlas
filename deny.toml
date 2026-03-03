@@ -5,7 +5,12 @@
 db-path = "~/.cargo/advisory-db"
 db-urls = ["https://github.com/rustsec/advisory-db"]
 version = 2
-ignore = []
+# Transitive unmaintained deps; no safe upgrade until upstream updates.
+ignore = [
+  "RUSTSEC-2025-0141",  # bincode (surrealdb)
+  "RUSTSEC-2024-0384",  # instant (tantivy)
+  "RUSTSEC-2025-0134",  # rustls-pemfile (qdrant-client/tonic)
+]
 
 [bans]
 multiple-versions = "warn"
@@ -14,7 +19,22 @@ highlight = "all"
 
 [licenses]
 version = 2
-allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "BSD-3-Clause"]
+# Permissive/OSI-approved licenses from transitive deps (surrealdb, tantivy, qdrant, etc.)
+allow = [
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "MIT",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Unlicense",
+  "Unicode-3.0",
+  "MPL-2.0",
+  "CC0-1.0",
+  "CDLA-Permissive-2.0",
+  "Zlib",
+  "BUSL-1.1",  # SurrealDB (source-available)
+]
 
 [sources]
 unknown-registry = "deny"

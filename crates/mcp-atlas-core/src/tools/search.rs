@@ -7,28 +7,8 @@ use serde_json::{Value, json};
 use mcp_atlas_data::models::{Project, ProjectSummary};
 
 use crate::server::AppState;
-
-const RRF_K: u32 = 60;
-
-/// Reciprocal Rank Fusion: merge two ranked lists by name, score = sum 1/(k+rank).
-fn reciprocal_rank_fusion(
-    bm25: &[ProjectSummary],
-    vector: &[(String, f64)],
-    k: u32,
-) -> Vec<String> {
-    let mut scores: HashMap<String, f64> = HashMap::new();
-    for (rank_1based, p) in bm25.iter().enumerate() {
-        let r = (rank_1based + 1) as u32;
-        *scores.entry(p.name.clone()).or_insert(0.0) += 1.0 / (k + r) as f64;
-    }
-    for (rank_1based, (name, _)) in vector.iter().enumerate() {
-        let r = (rank_1based + 1) as u32;
-        *scores.entry(name.clone()).or_insert(0.0) += 1.0 / (k + r) as f64;
-    }
-    let mut order: Vec<(String, f64)> = scores.into_iter().collect();
-    order.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
-    order.into_iter().map(|(name, _)| name).collect()
-}
+use crate::tools::args;
+use crate::tools::hybrid;
 
 fn project_summary_by_name(projects: &[Project], name: &str) -> Option<ProjectSummary> {
     projects
@@ -42,23 +22,24 @@ fn project_summary_by_name(projects: &[Project], name: &str) -> Option<ProjectSu
 /// Supports pagination via `offset` and `limit`. Uses hybrid (BM25 + vector) search when
 /// embedding provider and vector backend are configured.
 pub async fn handle_search_projects(state: &Arc<AppState>, args: &Value) -> Result<Value> {
-    let query = args.get("query").and_then(|q| q.as_str()).unwrap_or("");
-    let limit = args.get("limit").and_then(|l| l.as_u64()).unwrap_or(10) as usize;
-    let offset = args.get("offset").and_then(|o| o.as_u64()).unwrap_or(0) as usize;
-    let category_filter = args.get("category").and_then(|c| c.as_str());
-    let maturity_filter = args.get("maturity").and_then(|m| m.as_str());
-    let min_stars = args.get("min_stars").and_then(|s| s.as_u64());
-    let language_filter = args.get("language").and_then(|l| l.as_str());
+    let query = args::parse_string_arg(args, "query", "");
+    let limit = args::parse_usize_arg(args, "limit", 10);
+    let offset = args::parse_usize_arg(args, "offset", 0);
+    let category_filter = args::parse_optional_str(args, "category");
+    let maturity_filter = args::parse_optional_str(args, "maturity");
+    let min_stars = args::parse_optional_u64(args, "min_stars");
+    let language_filter = args::parse_optional_str(args, "language");
 
     let fetch_count = (offset + limit) * 3;
     let mut results = if let (Some(provider), Some(backend)) = (
         state.embedding_provider.as_ref(),
         state.vector_backend.as_ref(),
     ) {
-        let bm25 = state
-            .search_index
-            .search(query, fetch_count * 2, min_stars, language_filter)?;
-        match provider.embed(query).await {
+        let bm25 =
+            state
+                .search_index
+                .search(&query, fetch_count * 2, min_stars, language_filter)?;
+        match provider.embed(&query).await {
             Ok(embedding) => {
                 let vector_results = backend
                     .search(embedding.as_slice(), fetch_count * 2)
@@ -70,7 +51,8 @@ pub async fn handle_search_projects(state: &Arc<AppState>, args: &Value) -> Resu
                 if vector_results.is_empty() {
                     bm25
                 } else {
-                    let names = reciprocal_rank_fusion(&bm25, &vector_results, RRF_K);
+                    let names =
+                        hybrid::reciprocal_rank_fusion(&bm25, &vector_results, hybrid::RRF_K);
                     names
                         .into_iter()
                         .filter_map(|name| project_summary_by_name(&state.projects, &name))
@@ -86,7 +68,7 @@ pub async fn handle_search_projects(state: &Arc<AppState>, args: &Value) -> Resu
     } else {
         state
             .search_index
-            .search(query, fetch_count, min_stars, language_filter)?
+            .search(&query, fetch_count, min_stars, language_filter)?
     };
 
     // Apply post-search filters (category, maturity; min_stars/language also re-applied for hybrid path)
@@ -454,7 +436,7 @@ pub fn handle_find_alternatives(state: &Arc<AppState>, args: &Value) -> Result<V
         stars_b.cmp(&stars_a)
     });
 
-    let limit = args.get("limit").and_then(|l| l.as_u64()).unwrap_or(10) as usize;
+    let limit = args::parse_usize_arg(args, "limit", 10);
     alternatives.truncate(limit);
 
     let mut output = format!(
@@ -562,7 +544,7 @@ pub fn handle_get_good_first_issues(state: &Arc<AppState>, args: &Value) -> Resu
         .get("category")
         .and_then(|c| c.as_str())
         .map(|s| s.to_lowercase());
-    let limit = args.get("limit").and_then(|l| l.as_u64()).unwrap_or(20) as usize;
+    let limit = args::parse_usize_arg(args, "limit", 20);
 
     let mut candidates: Vec<_> = state
         .projects
@@ -672,7 +654,7 @@ mod tests {
             ("A".to_string(), 0.8),
             ("B".to_string(), 0.7),
         ];
-        let names = reciprocal_rank_fusion(&bm25, &vector, 60);
+        let names = hybrid::reciprocal_rank_fusion(&bm25, &vector, 60);
         assert_eq!(names.len(), 3);
         assert!(names.contains(&"A".to_string()));
         assert!(names.contains(&"B".to_string()));

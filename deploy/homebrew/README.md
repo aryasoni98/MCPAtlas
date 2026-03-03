@@ -1,31 +1,23 @@
 # Homebrew Formula
 
-This directory contains the Homebrew formula for MCPAtlas.
+This directory contains the Homebrew formula for MCPAtlas (kept in sync for reference). The canonical formula is published to the [aryasoni98/mcpatlas](https://github.com/aryasoni98/homebrew-mcpatlas) tap.
 
-## Using the formula
+## Install
 
-1. **Install from local formula (after a release):**
-   ```bash
-   brew install ./deploy/homebrew/mcp-atlas.rb
-   ```
-2. **Tap (when available):**  
-   If we publish a tap (e.g. `mcp-atlas/tap`), you will be able to run:
-   ```bash
-   brew tap mcp-atlas/tap
-   brew install mcp-atlas
-   ```
+```bash
+brew tap aryasoni98/mcpatlas
+brew install mcp-atlas
+```
 
 ## Automation
 
-The formula is **automatically updated** when a new release is created:
-
 1. Push to `main` with a version bump in `Cargo.toml` → `tag-on-main` creates a tag (e.g. `v0.1.0`)
 2. Tag push triggers the **Release** workflow → builds binaries, creates GitHub Release
-3. **Update Homebrew formula** job runs after the release → downloads tarballs, computes SHA256, updates `mcp-atlas.rb`, and pushes to `main`
+3. **Update Homebrew formula** job updates `deploy/homebrew/mcp-atlas.rb` in this repo
+4. **Update Homebrew tap** job pushes the formula to `aryasoni98/homebrew-mcpatlas`
 
 No manual `url`/`sha256` updates are required for new releases.
 
-## Manual update (if needed)
+## Tap bootstrap
 
-- Replace `v0.1.0` and `0.1.0` in the formula with the new version.
-- Run `shasum -a 256 <tarball>` on each platform tarball and set the `sha256` values in the formula.
+If the tap repo is empty, run once: see `deploy/homebrew-tap/README.md`.

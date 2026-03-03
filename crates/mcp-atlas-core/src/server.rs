@@ -368,7 +368,7 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
         let requests = state
             .request_count
             .load(std::sync::atomic::Ordering::Relaxed);
-        let sessions = state.sessions.read().unwrap().len();
+        let sessions = state.sessions.read().expect("sessions lock poisoned").len();
         let uptime = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
@@ -512,7 +512,7 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
 
         let active_session = if let Some(ref sid) = session_id {
             // Validate existing session
-            let sessions = state.sessions.read().unwrap();
+            let sessions = state.sessions.read().expect("sessions lock poisoned");
             if sessions.contains(sid) {
                 sid.clone()
             } else {
@@ -526,7 +526,7 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
             }
             let new_sid = uuid::Uuid::new_v4().to_string();
             {
-                let mut sessions = state.sessions.write().unwrap();
+                let mut sessions = state.sessions.write().expect("sessions lock poisoned");
                 sessions.insert(new_sid.clone());
             }
             new_sid
@@ -538,8 +538,10 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
         // Notifications don't get responses
         let Some(response) = response else {
             let mut resp = StatusCode::NO_CONTENT.into_response();
-            resp.headers_mut()
-                .insert("mcp-session-id", active_session.parse().unwrap());
+            resp.headers_mut().insert(
+                "mcp-session-id",
+                active_session.parse().expect("valid session ID header"),
+            );
             return resp;
         };
 
@@ -558,14 +560,18 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
 
             let sse = Sse::new(ReceiverStream::new(rx));
             let mut resp = sse.into_response();
-            resp.headers_mut()
-                .insert("mcp-session-id", active_session.parse().unwrap());
+            resp.headers_mut().insert(
+                "mcp-session-id",
+                active_session.parse().expect("valid session ID header"),
+            );
             resp
         } else {
             // Standard JSON response
             let mut resp = Json(response).into_response();
-            resp.headers_mut()
-                .insert("mcp-session-id", active_session.parse().unwrap());
+            resp.headers_mut().insert(
+                "mcp-session-id",
+                active_session.parse().expect("valid session ID header"),
+            );
             resp
         }
     }
@@ -583,7 +589,7 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
 
         // Validate session
         {
-            let sessions = state.sessions.read().unwrap();
+            let sessions = state.sessions.read().expect("sessions lock poisoned");
             if !sessions.contains(sid) {
                 return (StatusCode::BAD_REQUEST, "Invalid session ID").into_response();
             }
@@ -616,7 +622,7 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
         };
 
         let removed = {
-            let mut sessions = state.sessions.write().unwrap();
+            let mut sessions = state.sessions.write().expect("sessions lock poisoned");
             sessions.remove(sid)
         };
 
@@ -637,7 +643,7 @@ pub fn build_router(state: Arc<AppState>) -> axum::Router {
             axum::http::Method::OPTIONS,
         ])
         .allow_headers(Any)
-        .expose_headers(["mcp-session-id".parse().unwrap()]);
+        .expose_headers(["mcp-session-id".parse().expect("valid header name")]);
 
     Router::new()
         .route("/health", get(handle_health))

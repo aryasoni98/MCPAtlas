@@ -163,8 +163,8 @@ docker compose up -d
 ### Homebrew
 
 ```bash
-# Install from local formula (see deploy/homebrew/README.md for tap instructions)
-brew install ./deploy/homebrew/mcp-atlas.rb
+brew tap aryasoni98/mcpatlas
+brew install mcp-atlas
 ```
 
 ### CLI Tool

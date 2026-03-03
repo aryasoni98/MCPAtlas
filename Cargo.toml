@@ -5,6 +5,7 @@ members = [
     "crates/mcp-atlas-data",
     "crates/mcp-atlas-search",
     "crates/mcp-atlas-graph",
+    "crates/mcp-atlas-graph-surrealdb",
     "crates/mcp-atlas-vector",
     "crates/mcp-atlas-plugins",
     "crates/mcp-atlas-cli",

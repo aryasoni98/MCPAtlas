@@ -1,6 +1,8 @@
 use thiserror::Error;
 
 /// Structured error types for the CNCF MCP server.
+/// Reserved for future use when tool/resource handlers return structured errors.
+#[allow(dead_code)]
 #[derive(Debug, Error)]
 pub enum McpError {
     /// A required parameter was missing from the tool call.
